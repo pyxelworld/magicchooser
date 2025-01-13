@@ -16,33 +16,28 @@
             background: linear-gradient(to bottom, #313131, #141414);
             color: white;
         }
-
         .container {
             width: 90%;
             max-width: 400px;
             padding: 20px;
         }
-
         .logo {
             width: 100px;
             height: 100px;
             margin: 0 auto 20px;
             display: block;
         }
-
         h1 {
             text-align: center;
             margin-bottom: 30px;
             font-size: 28px;
             font-weight: bold;
         }
-
         .toggle-container {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
         }
-
         .toggle-btn {
             background-color: #737373;
             border: none;
@@ -59,38 +54,31 @@
             margin: 0 5px;
             justify-content: center;
         }
-
         .toggle-btn.active {
             background-color: #198AFF;
         }
-
         .toggle-btn.disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
         .toggle-btn svg {
             margin-right: 8px;
             width: 20px;
             height: 20px;
         }
-
         .model-selector {
             margin-bottom: 20px;
         }
-
         .model-selector p {
             margin-bottom: 10px;
             font-weight: bold;
             text-align: center;
         }
-
         .model-options {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
         }
-
         .model-option {
             background-color: #737373;
             border: none;
@@ -105,11 +93,9 @@
             margin: 5px;
             transition: background-color 0.3s;
         }
-
         .model-option.active {
             background-color: #198AFF;
         }
-
         .access-btn {
             background-color: #198AFF;
             border: none;
@@ -122,25 +108,21 @@
             font-weight: bold;
             margin-bottom: 10px;
         }
-
         .points-display {
             text-align: center;
             font-size: 14px;
             margin-bottom: 20px;
         }
-
         .language-switch {
             text-align: center;
             font-size: 16px;
             cursor: pointer;
             font-weight: bold;
         }
-
         @media (max-width: 480px) {
             .toggle-container {
                 flex-wrap: wrap;
             }
-
             .toggle-btn {
                 flex-basis: calc(50% - 10px);
                 margin-bottom: 10px;
@@ -338,38 +320,72 @@
         parseUrlParams();
 
         accessBtn.addEventListener('click', () => {
-            const links = {
-                'pesquisar': 'https://poe.com/MagicWebAI',
-                'liteGPT4oMini': 'https://poe.com/MagicLiteGPT4oMini',
-                'liteGPT4o': 'https://poe.com/MagicLiteGPT4o',
-                'liteGemini': 'https://poe.com/MagicLiteGemini',
-                'liteSonnet': 'https://poe.com/MagicLiteSonnet',
-                'liteRaciocinioGPT4oMini': 'https://poe.com/MagicXLiteGPT4oMini',
-                'liteRaciocinioGPT4o': 'https://poe.com/MagicXLiteGPT4o',
-                'liteRaciocinioGemini': 'https://poe.com/MagicXLiteGemini',
-                'liteRaciocinioSonnet': 'https://poe.com/MagicXLiteSonnet',
-                'defaultGPT4oMini': 'https://poe.com/PyxelMagic',
-                'defaultGPT4o': 'https://poe.com/MagicGPT4o',
-                'defaultGemini': 'https://poe.com/MagicGemini',
-                'raciocinioGPT4oMini': 'https://poe.com/MagicXGPT4oMini',
-                'raciocinioGPT4o': 'https://poe.com/MagicXGPT4o',
-                'raciocinioGemini': 'https://poe.com/MagicXGemini'
-            };
+            const pesquisar = pesquisarBtn.classList.contains('active');
+            const raciocinio = raciocinioBtn.classList.contains('active');
+            const lite = liteBtn.classList.contains('active');
+            const model = selectedModel.name;
 
-            let urlKey;
-            if (pesquisarBtn.classList.contains('active')) {
-                urlKey = 'pesquisar';
-            } else if (liteBtn.classList.contains('active') && raciocinioBtn.classList.contains('active')) {
-                urlKey = `liteRaciocinio${selectedModel.name.replace(/[^a-zA-Z0-9]/g, '')}`;
-            } else if (liteBtn.classList.contains('active')) {
-                urlKey = `lite${selectedModel.name.replace(/[^a-zA-Z0-9]/g, '')}`;
-            } else if (raciocinioBtn.classList.contains('active')) {
-                urlKey = `raciocinio${selectedModel.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+            let url = 'https://poe.com/';
+
+            if (pesquisar) {
+                url += 'MagicWebAI';
+            } else if (lite && raciocinio) {
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'MagicXLiteGPT4oMini';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicXLiteGPT4o';
+                        break;
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicXLiteGemimi';
+                        break;
+                    case 'Claude 3.5 Sonnet':
+                        url += 'MagicXLiteSonnet';
+                        break;
+                }
+            } else if (lite) {
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'MagicLiteGPT4oMini';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicLiteGPT4o';
+                        break;
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicLiteGemimi';
+                        break;
+                    case 'Claude 3.5 Sonnet':
+                        url += 'MagicLiteSonnet';
+                        break;
+                }
+            } else if (raciocinio) {
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'MagicXGPT4oMini';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicXGPT4o';
+                        break;
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicXGemini';
+                        break;
+                }
             } else {
-                urlKey = `default${selectedModel.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'PyxelMagic';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicGPT4o';
+                        break;
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicGemimi';
+                        break;
+                }
             }
 
-            window.location.href = links[urlKey];
+            window.location.href = url;
         });
     </script>
 </body>
