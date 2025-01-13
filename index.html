@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalize o Magic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #313131, #141414);
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            background-color: #737373;
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            flex: 1;
+            margin: 0 5px;
+            justify-content: center;
+        }
+
+        .toggle-btn.active {
+            background-color: #198AFF;
+        }
+
+        .toggle-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .toggle-btn svg {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .model-selector {
+            margin-bottom: 20px;
+        }
+
+        .model-selector p {
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .model-options {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .model-option {
+            background-color: #737373;
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1 0 calc(50% - 10px);
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .model-option.active {
+            background-color: #198AFF;
+        }
+
+        .access-btn {
+            background-color: #198AFF;
+            border: none;
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .points-display {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .language-switch {
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .toggle-container {
+                flex-wrap: wrap;
+            }
+
+            .toggle-btn {
+                flex-basis: calc(50% - 10px);
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="logo.png" alt="Logo" class="logo">
+        <h1>Personalize o Magic</h1>
+        <div class="toggle-container">
+            <button class="toggle-btn" id="pesquisar">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                Pesquisar
+            </button>
+            <button class="toggle-btn" id="raciocinio">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M20,2H4C2.9,2,2,2.9,2,4v18l4-4h14c1.1,0,2-0.9,2-2V4C22,2.9,21.1,2,20,2z M20,16H6l-2,2V4h16V16z"/>
+                </svg>
+                Raciocínio
+            </button>
+            <button class="toggle-btn" id="lite">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+                </svg>
+                Lite
+            </button>
+        </div>
+        <div class="model-selector">
+            <p id="modelSelectorText">Modelo</p>
+            <div class="model-options" id="modelOptions"></div>
+        </div>
+        <button class="access-btn" id="accessBtn">Acessar</button>
+        <div class="points-display" id="pointsDisplay"></div>
+        <div class="language-switch" id="languageSwitch">Switch to English</div>
+    </div>
+
+    <script>
+        const pesquisarBtn = document.getElementById('pesquisar');
+        const raciocinioBtn = document.getElementById('raciocinio');
+        const liteBtn = document.getElementById('lite');
+        const modelOptions = document.getElementById('modelOptions');
+        const accessBtn = document.getElementById('accessBtn');
+        const languageSwitch = document.getElementById('languageSwitch');
+        const pointsDisplay = document.getElementById('pointsDisplay');
+        const modelSelectorText = document.getElementById('modelSelectorText');
+
+        const models = {
+            default: [
+                { name: 'GPT-4o Mini', points: 75 },
+                { name: 'GPT-4o', points: 650 },
+                { name: 'Gemini 1.5 Flash', points: 300 }
+            ],
+            lite: [
+                { name: 'Gemini 1.5 Flash', points: 5 },
+                { name: 'GPT-4o Mini', points: 15 },
+                { name: 'GPT-4o', points: 300 },
+                { name: 'Claude 3.5 Sonnet', points: 380 }
+            ],
+            pesquisar: [
+                { name: 'GPT-4o Mini', points: 30 }
+            ]
+        };
+
+        let selectedModel = models.default[0];
+        let isEnglish = false;
+        let currentMode = 'default';
+
+        function updateModels() {
+            const options = currentMode === 'lite' ? models.lite : 
+                            (currentMode === 'pesquisar' ? models.pesquisar : models.default);
+            modelOptions.innerHTML = '';
+            options.forEach(model => {
+                const button = document.createElement('button');
+                button.classList.add('model-option');
+                button.textContent = model.name;
+                button.addEventListener('click', () => {
+                    selectedModel = model;
+                    updateActiveModel();
+                    updatePointsDisplay();
+                });
+                modelOptions.appendChild(button);
+            });
+            if (!options.some(model => model.name === selectedModel.name)) {
+                selectedModel = options[0];
+            }
+            updateActiveModel();
+            updatePointsDisplay();
+        }
+
+        function updateActiveModel() {
+            document.querySelectorAll('.model-option').forEach(button => {
+                button.classList.toggle('active', button.textContent === selectedModel.name);
+            });
+        }
+
+        function updatePointsDisplay() {
+            const points = getModelPoints(selectedModel.name);
+            pointsDisplay.textContent = `${points} ${isEnglish ? 'points per message' : 'pontos por mensagem'}`;
+        }
+
+        function getModelPoints(modelName) {
+            const modelList = currentMode === 'lite' ? models.lite :
+                              (currentMode === 'pesquisar' ? models.pesquisar : models.default);
+            const model = modelList.find(m => m.name === modelName);
+            return model ? model.points : 0;
+        }
+
+        function togglePesquisar() {
+            const isActive = pesquisarBtn.classList.toggle('active');
+            [raciocinioBtn, liteBtn].forEach(btn => {
+                btn.classList.toggle('disabled', isActive);
+                btn.classList.remove('active');
+            });
+            currentMode = isActive ? 'pesquisar' : 'default';
+            updateModels();
+        }
+
+        pesquisarBtn.addEventListener('click', togglePesquisar);
+        raciocinioBtn.addEventListener('click', () => {
+            if (!raciocinioBtn.classList.contains('disabled')) {
+                raciocinioBtn.classList.toggle('active');
+                updatePointsDisplay();
+            }
+        });
+        liteBtn.addEventListener('click', () => {
+            if (!liteBtn.classList.contains('disabled')) {
+                liteBtn.classList.toggle('active');
+                currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
+                updateModels();
+            }
+        });
+
+        function parseUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('en') !== null) {
+                isEnglish = true;
+                updateLanguage();
+            }
+            if (urlParams.get('lite') !== null) {
+                liteBtn.click();
+            }
+            if (urlParams.get('raciocinio') !== null) {
+                raciocinioBtn.click();
+            }
+            const modelParam = urlParams.get('model');
+            if (modelParam) {
+                const modelOption = document.querySelector(`.model-option[data-model="${modelParam}"]`);
+                if (modelOption) {
+                    modelOption.click();
+                }
+            }
+        }
+
+        function updateLanguage() {
+            if (isEnglish) {
+                document.querySelector('h1').textContent = 'Personalize Magic';
+                pesquisarBtn.innerHTML = pesquisarBtn.innerHTML.replace('Pesquisar', 'Search');
+                raciocinioBtn.innerHTML = raciocinioBtn.innerHTML.replace('Raciocínio', 'Reasoning');
+                accessBtn.textContent = 'Access';
+                languageSwitch.textContent = 'Trocar para Português';
+                modelSelectorText.textContent = 'Model';
+            } else {
+                document.querySelector('h1').textContent = 'Personalize o Magic';
+                pesquisarBtn.innerHTML = pesquisarBtn.innerHTML.replace('Search', 'Pesquisar');
+                raciocinioBtn.innerHTML = raciocinioBtn.innerHTML.replace('Reasoning', 'Raciocínio');
+                accessBtn.textContent = 'Acessar';
+                languageSwitch.textContent = 'Switch to English';
+                modelSelectorText.textContent = 'Modelo';
+            }
+            updatePointsDisplay();
+        }
+
+        languageSwitch.addEventListener('click', () => {
+            isEnglish = !isEnglish;
+            updateLanguage();
+        });
+
+        updateModels();
+        parseUrlParams();
+
+        accessBtn.addEventListener('click', () => {
+            const pesquisar = pesquisarBtn.classList.contains('active');
+            const raciocinio = raciocinioBtn.classList.contains('active');
+            const lite = liteBtn.classList.contains('active');
+            const model = selectedModel.name;
+
+            let url = 'https://poe.com/';
+            if (pesquisar) {
+                url += 'MagicWebAI';
+            } else if (lite && raciocinio) {
+                url += `MagicXLite${model.replace(/[^a-zA-Z0-9]/g, '')}`;
+            } else if (lite) {
+                url += `MagicLite${model.replace(/[^a-zA-Z0-9]/g, '')}`;
+            } else if (raciocinio) {
+                url += `MagicX${model.replace(/[^a-zA-Z0-9]/g, '')}`;
+            } else {
+                url += model === 'GPT-4o Mini' ? 'PyxelMagic' : `Magic${model.replace(/[^a-zA-Z0-9]/g, '')}`;
+            }
+
+            const params = new URLSearchParams();
+            if (isEnglish) params.append('lang', 'en');
+            if (raciocinio) params.append('raciocinio', 'true');
+            params.append('model', model.replace(/\s/g, ''));
+
+            window.location.href = `${url}?${params.toString()}`;
+        });
+    </script>
+</body>
+</html>
