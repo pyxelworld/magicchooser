@@ -288,11 +288,23 @@
             if (urlParams.get('raciocinio') !== null) {
                 raciocinioBtn.click();
             }
+            if (urlParams.get('search') !== null) {
+                pesquisarBtn.click();
+            }
             const modelParam = urlParams.get('model');
             if (modelParam) {
-                const modelOption = document.querySelector(`.model-option[data-model="${modelParam}"]`);
-                if (modelOption) {
-                    modelOption.click();
+                const modelMap = {
+                    'sonnet': 'Claude 3.5 Sonnet',
+                    'gemini': 'Gemini 1.5 Flash',
+                    'gpt4omini': 'GPT-4o Mini',
+                    'gpt4o': 'GPT-4o'
+                };
+                const modelName = modelMap[modelParam.toLowerCase()];
+                if (modelName) {
+                    const modelOption = Array.from(modelOptions.children).find(button => button.textContent === modelName);
+                    if (modelOption) {
+                        modelOption.click();
+                    }
                 }
             }
         }
