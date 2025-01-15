@@ -185,7 +185,8 @@
                 { name: 'Claude 3.5 Sonnet', points: 380 }
             ],
             pesquisar: [
-                { name: 'GPT-4o Mini', points: 30 }
+                { name: 'Gemini 1.5 Flash', points: 25 },
+                { name: 'GPT-4o Mini', points: 15 }
             ]
         };
 
@@ -327,7 +328,15 @@
             let url = 'https://poe.com/';
 
             if (pesquisar) {
-                url += 'MagicWebAI';
+                switch (model) {
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicWebAI';
+                        break;
+                    case 'GPT-4o Mini':
+                        url += 'webAIGPT';
+                        break;
+
+                }
             } else if (lite && raciocinio) {
                 switch (model) {
                     case 'GPT-4o Mini':
