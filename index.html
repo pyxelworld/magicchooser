@@ -206,6 +206,7 @@
                     selectedModel = model;
                     updateActiveModel();
                     updatePointsDisplay();
+                    saveSettings();
                 });
                 modelOptions.appendChild(button);
             });
@@ -242,6 +243,7 @@
             });
             currentMode = isActive ? 'pesquisar' : 'default';
             updateModels();
+            saveSettings();
         }
 
         pesquisarBtn.addEventListener('click', togglePesquisar);
@@ -249,6 +251,7 @@
             if (!raciocinioBtn.classList.contains('disabled')) {
                 raciocinioBtn.classList.toggle('active');
                 updatePointsDisplay();
+                saveSettings();
             }
         });
         liteBtn.addEventListener('click', () => {
@@ -256,6 +259,7 @@
                 liteBtn.classList.toggle('active');
                 currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
                 updateModels();
+                saveSettings();
             }
         });
 
@@ -314,9 +318,38 @@
         languageSwitch.addEventListener('click', () => {
             isEnglish = !isEnglish;
             updateLanguage();
+            saveSettings();
         });
 
+        function saveSettings() {
+            const settings = {
+                pesquisar: pesquisarBtn.classList.contains('active'),
+                raciocinio: raciocinioBtn.classList.contains('active'),
+                lite: liteBtn.classList.contains('active'),
+                model: selectedModel.name,
+                isEnglish: isEnglish
+            };
+            localStorage.setItem('magicSettings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('magicSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                if (settings.pesquisar) pesquisarBtn.click();
+                if (settings.raciocinio) raciocinioBtn.click();
+                if (settings.lite) liteBtn.click();
+                isEnglish = settings.isEnglish;
+                updateLanguage();
+                const modelOption = Array.from(modelOptions.children).find(button => button.textContent === settings.model);
+                if (modelOption) {
+                    modelOption.click();
+                }
+            }
+        }
+
         updateModels();
+        loadSettings();
         parseUrlParams();
 
         accessBtn.addEventListener('click', () => {
@@ -335,7 +368,6 @@
                     case 'GPT-4o Mini':
                         url += 'webAIGPT';
                         break;
-
                 }
             } else if (lite && raciocinio) {
                 switch (model) {
@@ -375,7 +407,6 @@
                     case 'GPT-4o':
                         url += 'MagicXGPT4o';
                         break;
-
                 }
             } else {
                 switch (model) {
@@ -388,6 +419,7 @@
                 }
             }
 
+            saveSettings();
             window.location.href = url;
         });
     </script>
