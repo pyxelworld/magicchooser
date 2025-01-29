@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <!-- O cabeçalho permanece o mesmo -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personalize o Magic</title>
@@ -395,16 +396,7 @@
         accessBtn.addEventListener('click', () => {
             let url = 'https://poe.com/';
             
-            if (currentMode === 'pesquisar') {
-                switch(selectedModel.name) {
-                    case 'Gemini 1.5 Flash':
-                        url += `?model=gemini`;
-                        break;
-                    case 'GPT-4o Mini':
-                        url += `?model=gpt4`;
-                        break;
-                }
-            } else if (currentMode === 'raciocinioZ') {
+            if (currentMode === 'raciocinioZ') {
                 switch(selectedModel.name) {
                     case 'DeepSeek R1':
                         url += `?model=deep`;
@@ -413,47 +405,11 @@
                         url += `?model=deepd`;
                         break;
                 }
-            } else if (currentMode === 'raciocinioX') {
-                switch(selectedModel.name) {
-                    case 'GPT-4o Mini':
-                        url += `?model=gpt4`;
-                        break;
-                    case 'GPT-4o':
-                        url += `?model=gpt4`;
-                        break;
-                    case 'Claude 3.5 Sonnet':
-                        url += `?model=claude`;
-                        break;
-                }
-            } else if (currentMode === 'lite') {
-                switch(selectedModel.name) {
-                    case 'GPT-4o Mini':
-                        url += `?model=gpt4`;
-                        break;
-                    case 'GPT-4o':
-                        url += `?model=gpt4`;
-                        break;
-                    case 'Gemini 1.5 Flash':
-                        url += `?model=gemini`;
-                        break;
-                    case 'Claude 3.5 Sonnet':
-                        url += `?model=claude`;
-                        break;
-                }
-            } else {
-                switch(selectedModel.name) {
-                    case 'GPT-4o Mini':
-                        url += `?model=gpt4`;
-                        break;
-                    case 'GPT-4o':
-                        url += `?model=gpt4`;
-                        break;
-                }
             }
-
+            
             saveSettings();
             window.location.href = url;
         });
     </script>
 </body>
-</html>	
+</html>
