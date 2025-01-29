@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <!-- O cabeçalho permanece o mesmo -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personalize o Magic</title>
     <style>
-        /* O CSS permanece o mesmo */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -37,27 +35,24 @@
         }
         .toggle-container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
         .toggle-btn {
             background-color: #737373;
             border: none;
             color: white;
-            padding: 10px 8px;
+            padding: 12px 18px;
             border-radius: 12px;
             cursor: pointer;
             transition: background-color 0.3s, opacity 0.3s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            flex: 0 0 calc(50% - 5px);
-            margin: 0;
-            min-height: 48px;
-            box-sizing: border-box;
+            flex: 1;
+            margin: 0 5px;
+            justify-content: center;
         }
         .toggle-btn.active {
             background-color: #198AFF;
@@ -67,9 +62,9 @@
             cursor: not-allowed;
         }
         .toggle-btn svg {
-            margin-right: 6px;
-            width: 18px;
-            height: 18px;
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
         }
         .model-selector {
             margin-bottom: 20px;
@@ -83,23 +78,20 @@
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
         }
         .model-option {
             background-color: #737373;
             border: none;
             color: white;
-            padding: 10px 8px;
+            padding: 12px 18px;
             border-radius: 12px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             text-align: center;
-            flex: 0 0 calc(50% - 5px);
-            margin: 0;
+            flex: 1 0 calc(50% - 10px);
+            margin: 5px;
             transition: background-color 0.3s;
-            box-sizing: border-box;
-            min-height: 48px;
         }
         .model-option.active {
             background-color: #198AFF;
@@ -108,28 +100,33 @@
             background-color: #198AFF;
             border: none;
             color: white;
-            padding: 14px;
+            padding: 16px;
             border-radius: 12px;
             cursor: pointer;
             width: 100%;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             margin-bottom: 10px;
-            transition: opacity 0.3s;
         }
         .points-display {
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
             margin-bottom: 20px;
-            opacity: 0.8;
         }
         .language-switch {
             text-align: center;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             font-weight: bold;
-            opacity: 0.8;
-            transition: opacity 0.3s;
+        }
+        @media (max-width: 480px) {
+            .toggle-container {
+                flex-wrap: wrap;
+            }
+            .toggle-btn {
+                flex-basis: calc(50% - 10px);
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -139,28 +136,22 @@
         <h1>Personalize o Magic</h1>
         <div class="toggle-container">
             <button class="toggle-btn" id="pesquisar">
-                <svg viewBox="0 0 24 24">
+                <svg viewBox="0 0 24 24" width="24" height="24">
                     <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
                 Pesquisar
             </button>
-            <button class="toggle-btn" id="raciocinioX">
-                <svg viewBox="0 0 24 24">
+            <button class="toggle-btn" id="raciocinio">
+                <svg viewBox="0 0 24 24" width="24" height="24">
                     <path fill="currentColor" d="M20,2H4C2.9,2,2,2.9,2,4v18l4-4h14c1.1,0,2-0.9,2-2V4C22,2.9,21.1,2,20,2z M20,16H6l-2,2V4h16V16z"/>
                 </svg>
-                Raciocínio X
+                Raciocínio
             </button>
             <button class="toggle-btn" id="lite">
-                <svg viewBox="0 0 24 24">
+                <svg viewBox="0 0 24 24" width="24" height="24">
                     <path fill="currentColor" d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
                 </svg>
                 Lite
-            </button>
-            <button class="toggle-btn" id="raciocinioZ">
-                <svg viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M20,2H4C2.9,2,2,2.9,2,4v18l4-4h14c1.1,0,2-0.9,2-2V4C22,2.9,21.1,2,20,2z M20,16H6l-2,2V4h16V16z"/>
-                </svg>
-                Raciocínio Z
             </button>
         </div>
         <div class="model-selector">
@@ -174,9 +165,8 @@
 
     <script>
         const pesquisarBtn = document.getElementById('pesquisar');
-        const raciocinioXBtn = document.getElementById('raciocinioX');
+        const raciocinioBtn = document.getElementById('raciocinio');
         const liteBtn = document.getElementById('lite');
-        const raciocinioZBtn = document.getElementById('raciocinioZ');
         const modelOptions = document.getElementById('modelOptions');
         const accessBtn = document.getElementById('accessBtn');
         const languageSwitch = document.getElementById('languageSwitch');
@@ -197,10 +187,6 @@
             pesquisar: [
                 { name: 'Gemini 1.5 Flash', points: 25 },
                 { name: 'GPT-4o Mini', points: 15 }
-            ],
-            raciocinioZ: [
-                { name: 'DeepSeek R1', points: 300 },
-                { name: 'DeepSeek R1 Distill', points: 150 }
             ]
         };
 
@@ -210,9 +196,7 @@
 
         function updateModels() {
             const options = currentMode === 'lite' ? models.lite : 
-                          currentMode === 'pesquisar' ? models.pesquisar :
-                          currentMode === 'raciocinioZ' ? models.raciocinioZ : 
-                          models.default;
+                            (currentMode === 'pesquisar' ? models.pesquisar : models.default);
             modelOptions.innerHTML = '';
             options.forEach(model => {
                 const button = document.createElement('button');
@@ -246,16 +230,14 @@
 
         function getModelPoints(modelName) {
             const modelList = currentMode === 'lite' ? models.lite :
-                            currentMode === 'pesquisar' ? models.pesquisar :
-                            currentMode === 'raciocinioZ' ? models.raciocinioZ :
-                            models.default;
+                              (currentMode === 'pesquisar' ? models.pesquisar : models.default);
             const model = modelList.find(m => m.name === modelName);
             return model ? model.points : 0;
         }
 
         function togglePesquisar() {
             const isActive = pesquisarBtn.classList.toggle('active');
-            [raciocinioXBtn, liteBtn, raciocinioZBtn].forEach(btn => {
+            [raciocinioBtn, liteBtn].forEach(btn => {
                 btn.classList.toggle('disabled', isActive);
                 btn.classList.remove('active');
             });
@@ -264,21 +246,10 @@
             saveSettings();
         }
 
-        function toggleRaciocinioZ() {
-            const isActive = raciocinioZBtn.classList.toggle('active');
-            [pesquisarBtn, raciocinioXBtn, liteBtn].forEach(btn => {
-                btn.classList.toggle('disabled', isActive);
-                btn.classList.remove('active');
-            });
-            currentMode = isActive ? 'raciocinioZ' : 'default';
-            updateModels();
-            saveSettings();
-        }
-
         pesquisarBtn.addEventListener('click', togglePesquisar);
-        raciocinioXBtn.addEventListener('click', () => {
-            if (!raciocinioXBtn.classList.contains('disabled')) {
-                raciocinioXBtn.classList.toggle('active');
+        raciocinioBtn.addEventListener('click', () => {
+            if (!raciocinioBtn.classList.contains('disabled')) {
+                raciocinioBtn.classList.toggle('active');
                 updatePointsDisplay();
                 saveSettings();
             }
@@ -291,7 +262,6 @@
                 saveSettings();
             }
         });
-        raciocinioZBtn.addEventListener('click', toggleRaciocinioZ);
 
         function parseUrlParams() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -303,13 +273,10 @@
                 liteBtn.click();
             }
             if (urlParams.get('raciocinio') !== null) {
-                raciocinioXBtn.click();
+                raciocinioBtn.click();
             }
             if (urlParams.get('search') !== null) {
                 pesquisarBtn.click();
-            }
-            if (urlParams.get('raciocinioZ') !== null) {
-                raciocinioZBtn.click();
             }
             const modelParam = urlParams.get('model');
             if (modelParam) {
@@ -317,9 +284,7 @@
                     'sonnet': 'Claude 3.5 Sonnet',
                     'gemini': 'Gemini 1.5 Flash',
                     'gpt4omini': 'GPT-4o Mini',
-                    'gpt4o': 'GPT-4o',
-                    'deepseek': 'DeepSeek R1',
-                    'deepseekdistill': 'DeepSeek R1 Distill'
+                    'gpt4o': 'GPT-4o'
                 };
                 const modelName = modelMap[modelParam.toLowerCase()];
                 if (modelName) {
@@ -335,18 +300,14 @@
             if (isEnglish) {
                 document.querySelector('h1').textContent = 'Personalize Magic';
                 pesquisarBtn.innerHTML = pesquisarBtn.innerHTML.replace('Pesquisar', 'Search');
-                raciocinioXBtn.innerHTML = raciocinioXBtn.innerHTML.replace('Raciocínio X', 'Reasoning X');
-                raciocinioZBtn.innerHTML = raciocinioZBtn.innerHTML.replace('Raciocínio Z', 'Reasoning Z');
-                liteBtn.innerHTML = liteBtn.innerHTML.replace('Lite', 'Lite');
+                raciocinioBtn.innerHTML = raciocinioBtn.innerHTML.replace('Raciocínio', 'Reasoning');
                 accessBtn.textContent = 'Access';
-                languageSwitch.textContent = 'Switch to Portuguese';
+                languageSwitch.textContent = 'Trocar para Português';
                 modelSelectorText.textContent = 'Model';
             } else {
                 document.querySelector('h1').textContent = 'Personalize o Magic';
                 pesquisarBtn.innerHTML = pesquisarBtn.innerHTML.replace('Search', 'Pesquisar');
-                raciocinioXBtn.innerHTML = raciocinioXBtn.innerHTML.replace('Reasoning X', 'Raciocínio X');
-                raciocinioZBtn.innerHTML = raciocinioZBtn.innerHTML.replace('Reasoning Z', 'Raciocínio Z');
-                liteBtn.innerHTML = liteBtn.innerHTML.replace('Lite', 'Lite');
+                raciocinioBtn.innerHTML = raciocinioBtn.innerHTML.replace('Reasoning', 'Raciocínio');
                 accessBtn.textContent = 'Acessar';
                 languageSwitch.textContent = 'Switch to English';
                 modelSelectorText.textContent = 'Modelo';
@@ -363,8 +324,7 @@
         function saveSettings() {
             const settings = {
                 pesquisar: pesquisarBtn.classList.contains('active'),
-                raciocinioX: raciocinioXBtn.classList.contains('active'),
-                raciocinioZ: raciocinioZBtn.classList.contains('active'),
+                raciocinio: raciocinioBtn.classList.contains('active'),
                 lite: liteBtn.classList.contains('active'),
                 model: selectedModel.name,
                 isEnglish: isEnglish
@@ -377,8 +337,7 @@
             if (savedSettings) {
                 const settings = JSON.parse(savedSettings);
                 if (settings.pesquisar) pesquisarBtn.click();
-                if (settings.raciocinioX) raciocinioXBtn.click();
-                if (settings.raciocinioZ) raciocinioZBtn.click();
+                if (settings.raciocinio) raciocinioBtn.click();
                 if (settings.lite) liteBtn.click();
                 isEnglish = settings.isEnglish;
                 updateLanguage();
@@ -394,19 +353,72 @@
         parseUrlParams();
 
         accessBtn.addEventListener('click', () => {
+            const pesquisar = pesquisarBtn.classList.contains('active');
+            const raciocinio = raciocinioBtn.classList.contains('active');
+            const lite = liteBtn.classList.contains('active');
+            const model = selectedModel.name;
+
             let url = 'https://poe.com/';
-            
-            if (currentMode === 'raciocinioZ') {
-                switch(selectedModel.name) {
-                    case 'DeepSeek R1':
-                        url += `?model=deep`;
+
+            if (pesquisar) {
+                switch (model) {
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicWebAI';
                         break;
-                    case 'DeepSeek R1 Distill':
-                        url += `?model=ddeep`;
+                    case 'GPT-4o Mini':
+                        url += 'webAIGPT';
+                        break;
+                }
+            } else if (lite && raciocinio) {
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'MagicXLiteGPT4oMini';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicXLiteGPT4o';
+                        break;
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicXLiteGemini';
+                        break;
+                    case 'Claude 3.5 Sonnet':
+                        url += 'MagicXLiteSonnet';
+                        break;
+                }
+            } else if (lite) {
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'MagicLiteGPT4oMini';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicLiteGPT4o';
+                        break;
+                    case 'Gemini 1.5 Flash':
+                        url += 'MagicLiteGemini';
+                        break;
+                    case 'Claude 3.5 Sonnet':
+                        url += 'MagicLiteSonnet';
+                        break;
+                }
+            } else if (raciocinio) {
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'MagicXGPT4oMini';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicXGPT4o';
+                        break;
+                }
+            } else {
+                switch (model) {
+                    case 'GPT-4o Mini':
+                        url += 'PyxelMagic';
+                        break;
+                    case 'GPT-4o':
+                        url += 'MagicGPT4o';
                         break;
                 }
             }
-            
+
             saveSettings();
             window.location.href = url;
         });
