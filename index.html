@@ -43,15 +43,16 @@
             background-color: #737373;
             border: none;
             color: white;
-            padding: 15px;
+            padding: 12px;
             border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
             font-weight: bold;
+            height: 48px;
         }
         .toggle-btn:not(#lite) {
             flex: 1 0 calc(50% - 5px);
@@ -63,6 +64,10 @@
         }
         .toggle-btn.active {
             background-color: #198AFF;
+        }
+        .toggle-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         .model-selector {
             margin-bottom: 20px;
@@ -187,7 +192,6 @@
                           (currentMode === 'raciocinioZ' ? models.raciocinioZ : models.default);
             modelOptions.innerHTML = '';
             
-            // Auto-select first model
             selectedModel = options[0];
             
             options.forEach(model => {
@@ -221,16 +225,29 @@
 
         function toggleMode(mode) {
             if (mode === 'raciocinioZ') {
-                raciocinioZBtn.classList.toggle('active');
-                currentMode = raciocinioZBtn.classList.contains('active') ? 'raciocinioZ' : 'default';
-            } else if (mode === 'raciocinioX') {
+                const wasActive = raciocinioZBtn.classList.toggle('active');
+                
+                if (wasActive) {
+                    currentMode = 'raciocinioZ';
+                    raciocinioXBtn.classList.add('disabled');
+                    liteBtn.classList.add('disabled');
+                } else {
+                    currentMode = 'default';
+                    raciocinioXBtn.classList.remove('disabled');
+                    liteBtn.classList.remove('disabled');
+                }
+                updateModels();
+            }
+            else if (mode === 'raciocinioX' && !raciciocinioZBtn.classList.contains('active')) {
                 raciocinioXBtn.classList.toggle('active');
                 currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
-            } else if (mode === 'lite') {
+                updateModels();
+            }
+            else if (mode === 'lite' && !raciciocinioZBtn.classList.contains('active')) {
                 liteBtn.classList.toggle('active');
                 currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
+                updateModels();
             }
-            updateModels();
         }
 
         raciocinioXBtn.addEventListener('click', () => toggleMode('raciocinioX'));
