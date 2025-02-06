@@ -184,28 +184,48 @@
         };
 
         let selectedModel = models.default[0];
-        let isEnglish = false;
-        let currentMode = 'default';
+        let isEnglish = localStorage.getItem('isEnglish') === 'true' || false;
+        let currentMode = localStorage.getItem('currentMode') || 'default';
+
+        function saveSettings() {
+            localStorage.setItem('isEnglish', isEnglish);
+            localStorage.setItem('currentMode', currentMode);
+            localStorage.setItem('selectedModel', JSON.stringify(selectedModel));
+            localStorage.setItem('raciocinioXActive', raciocinioXBtn.classList.contains('active'));
+            localStorage.setItem('raciocinioZActive', raciocinioZBtn.classList.contains('active'));
+            localStorage.setItem('liteActive', liteBtn.classList.contains('active'));
+        }
+
+        function loadSettings() {
+            const savedModel = JSON.parse(localStorage.getItem('selectedModel'));
+            if (savedModel) {
+                const model = models[currentMode].find(m => m.name === savedModel.name);
+                if (model) selectedModel = model;
+            }
+            
+            raciocinioXBtn.classList.toggle('active', localStorage.getItem('raciocinioXActive') === 'true');
+            raciocinioZBtn.classList.toggle('active', localStorage.getItem('raciocinioZActive') === 'true');
+            liteBtn.classList.toggle('active', localStorage.getItem('liteActive') === 'true');
+        }
 
         function updateModels() {
             const options = currentMode === 'lite' ? models.lite : 
                           (currentMode === 'raciocinioZ' ? models.raciocinioZ : models.default);
             modelOptions.innerHTML = '';
             
-            selectedModel = options[0];
-            
             options.forEach(model => {
                 const button = document.createElement('button');
                 button.classList.add('model-option');
                 button.textContent = model.name;
+                if(model.name === selectedModel.name) button.classList.add('active');
                 button.addEventListener('click', () => {
                     selectedModel = model;
                     updateActiveModel();
                     updatePointsDisplay();
+                    saveSettings();
                 });
                 modelOptions.appendChild(button);
             });
-            updateActiveModel();
             updatePointsDisplay();
         }
 
@@ -238,16 +258,17 @@
                 }
                 updateModels();
             }
-            else if (mode === 'raciocinioX' && !raciciocinioZBtn.classList.contains('active')) {
+            else if (mode === 'raciocinioX' && !raciocinioZBtn.classList.contains('active')) {
                 raciocinioXBtn.classList.toggle('active');
                 currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
                 updateModels();
             }
-            else if (mode === 'lite' && !raciciocinioZBtn.classList.contains('active')) {
+            else if (mode === 'lite' && !raciocinioZBtn.classList.contains('active')) {
                 liteBtn.classList.toggle('active');
                 currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
                 updateModels();
             }
+            saveSettings();
         }
 
         raciocinioXBtn.addEventListener('click', () => toggleMode('raciocinioX'));
@@ -256,28 +277,37 @@
 
         function parseUrlParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('en') !== null) isEnglish = true;
-            if (urlParams.get('lite') !== null) toggleMode('lite');
-            if (urlParams.get('raciocinio') !== null) toggleMode('raciocinioX');
-            if (urlParams.get('raciocinioz') !== null) toggleMode('raciocinioZ');
-            
-            const modelParam = urlParams.get('model');
-            if (modelParam) {
-                const modelMap = {
-                    'sonnet': 'Claude 3.5 Sonnet',
-                    'gemini': currentMode === 'lite' ? 'Gemini 2.0 Flash Lite' : 'Gemini 2.0 Flash',
-                    'gpt4omini': 'GPT-4o Mini',
-                    'gpt4o': 'GPT-4o',
-                    'deep': 'DeepSeek R1',
-                    'distill': 'DeepSeek R1 Distill'
-                };
-                const modelName = modelMap[modelParam.toLowerCase()];
-                if (modelName) {
-                    const modelOption = Array.from(modelOptions.children).find(button => button.textContent === modelName);
-                    if (modelOption) modelOption.click();
+            const hasParams = urlParams.toString() !== '';
+
+            if (hasParams) {
+                // Salva configurações da URL
+                isEnglish = urlParams.get('en') !== null;
+                if (urlParams.get('lite') !== null) toggleMode('lite');
+                if (urlParams.get('raciocinio') !== null) toggleMode('raciocinioX');
+                if (urlParams.get('raciocinioz') !== null) toggleMode('raciocinioZ');
+                
+                const modelParam = urlParams.get('model');
+                if (modelParam) {
+                    const modelMap = {
+                        'sonnet': 'Claude 3.5 Sonnet',
+                        'gemini': currentMode === 'lite' ? 'Gemini 2.0 Flash Lite' : 'Gemini 2.0 Flash',
+                        'gpt4omini': 'GPT-4o Mini',
+                        'gpt4o': 'GPT-4o',
+                        'deep': 'DeepSeek R1',
+                        'distill': 'DeepSeek R1 Distill'
+                    };
+                    const modelName = modelMap[modelParam.toLowerCase()];
+                    if (modelName) {
+                        selectedModel = models[currentMode].find(m => m.name === modelName) || selectedModel;
+                    }
                 }
+                saveSettings();
+            } else {
+                loadSettings();
             }
+            
             updateLanguage();
+            updateModels();
         }
 
         function updateLanguage() {
@@ -301,10 +331,10 @@
 
         languageSwitch.addEventListener('click', () => {
             isEnglish = !isEnglish;
+            saveSettings();
             updateLanguage();
         });
 
-        updateModels();
         parseUrlParams();
 
         accessBtn.addEventListener('click', () => {
@@ -318,43 +348,23 @@
             if (lite) {
                 if (raciocinioX) {
                     switch (model) {
-                        case 'GPT-4o Mini':
-                            url += 'MagicXLiteGPT4oMini';
-                            break;
-                        case 'GPT-4o':
-                            url += 'MagicXLiteGPT4o';
-                            break;
-                        case 'Gemini 2.0 Flash Lite':
-                            url += 'MagicXLiteGemini';
-                            break;
-                        case 'Claude 3.5 Sonnet':
-                            url += 'MagicXLiteSonnet';
-                            break;
+                        case 'GPT-4o Mini': url += 'MagicXLiteGPT4oMini'; break;
+                        case 'GPT-4o': url += 'MagicXLiteGPT4o'; break;
+                        case 'Gemini 2.0 Flash Lite': url += 'MagicXLiteGemini'; break;
+                        case 'Claude 3.5 Sonnet': url += 'MagicXLiteSonnet'; break;
                     }
                 } else {
                     switch (model) {
-                        case 'GPT-4o Mini':
-                            url += 'MagicLiteGPT4oMini';
-                            break;
-                        case 'GPT-4o':
-                            url += 'MagicLiteGPT4o';
-                            break;
-                        case 'Gemini 2.0 Flash Lite':
-                            url += 'MagicLiteGemini';
-                            break;
-                        case 'Claude 3.5 Sonnet':
-                            url += 'MagicLiteSonnet';
-                            break;
+                        case 'GPT-4o Mini': url += 'MagicLiteGPT4oMini'; break;
+                        case 'GPT-4o': url += 'MagicLiteGPT4o'; break;
+                        case 'Gemini 2.0 Flash Lite': url += 'MagicLiteGemini'; break;
+                        case 'Claude 3.5 Sonnet': url += 'MagicLiteSonnet'; break;
                     }
                 }
             } else if (raciocinioZ) {
                 switch (model) {
-                    case 'DeepSeek R1':
-                        url += 'MagicDeepSeek';
-                        break;
-                    case 'DeepSeek R1 Distill':
-                        url += 'MagicDeepSeekDistill';
-                        break;
+                    case 'DeepSeek R1': url += 'MagicDeepSeek'; break;
+                    case 'DeepSeek R1 Distill': url += 'MagicDeepSeekDistill'; break;
                 }
             } else {
                 url += 'PyxelMagic';
