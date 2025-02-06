@@ -36,36 +36,33 @@
         .toggle-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
+            gap: 10px;
             margin-bottom: 20px;
         }
         .toggle-btn {
             background-color: #737373;
             border: none;
             color: white;
-            padding: 12px 18px;
+            padding: 15px;
             border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.3s, opacity 0.3s;
+            transition: background-color 0.3s;
             display: flex;
             align-items: center;
+            justify-content: center;
             font-size: 14px;
             font-weight: bold;
-            flex: 0 0 calc(50% - 5px);
-            margin-bottom: 10px;
-            justify-content: center;
+        }
+        .toggle-btn:not(#lite) {
+            flex: 1 0 calc(50% - 5px);
+            max-width: calc(50% - 5px);
+        }
+        #lite {
+            flex: 1 0 100%;
+            max-width: 100%;
         }
         .toggle-btn.active {
             background-color: #198AFF;
-        }
-        .toggle-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .toggle-btn svg {
-            margin-right: 8px;
-            width: 20px;
-            height: 20px;
         }
         .model-selector {
             margin-bottom: 20px;
@@ -79,6 +76,7 @@
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
+            gap: 10px;
         }
         .model-option {
             background-color: #737373;
@@ -89,9 +87,8 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
+            flex: 1 0 calc(50% - 5px);
             text-align: center;
-            flex: 1 0 calc(50% - 10px);
-            margin: 5px;
             transition: background-color 0.3s;
         }
         .model-option.active {
@@ -127,12 +124,6 @@
         <img src="logo.png" alt="Logo" class="logo">
         <h1>Personalize o Magic</h1>
         <div class="toggle-container">
-            <button class="toggle-btn" id="pesquisar">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                </svg>
-                Pesquisar
-            </button>
             <button class="toggle-btn" id="raciocinioX">
                 <svg viewBox="0 0 24 24" width="24" height="24">
                     <path fill="currentColor" d="M20,2H4C2.9,2,2,2.9,2,4v18l4-4h14c1.1,0,2-0.9,2-2V4C22,2.9,21.1,2,20,2z M20,16H6l-2,2V4h16V16z"/>
@@ -162,7 +153,6 @@
     </div>
 
     <script>
-        const pesquisarBtn = document.getElementById('pesquisar');
         const raciocinioXBtn = document.getElementById('raciocinioX');
         const raciocinioZBtn = document.getElementById('raciocinioZ');
         const liteBtn = document.getElementById('lite');
@@ -174,18 +164,13 @@
 
         const models = {
             default: [
-                { name: 'GPT-4o Mini', points: 75 },
-                { name: 'GPT-4o', points: 650 }
+                { name: 'Gemini 2.0 Flash', points: 11 }
             ],
             lite: [
-                { name: 'Gemini 1.5 Flash', points: 5 },
+                { name: 'Gemini 2.0 Flash Lite', points: 6 },
                 { name: 'GPT-4o Mini', points: 15 },
                 { name: 'GPT-4o', points: 300 },
                 { name: 'Claude 3.5 Sonnet', points: 380 }
-            ],
-            pesquisar: [
-                { name: 'Gemini 1.5 Flash', points: 25 },
-                { name: 'GPT-4o Mini', points: 15 }
             ],
             raciocinioZ: [
                 { name: 'DeepSeek R1', points: 300 },
@@ -199,9 +184,12 @@
 
         function updateModels() {
             const options = currentMode === 'lite' ? models.lite : 
-                            (currentMode === 'pesquisar' ? models.pesquisar :
-                            (currentMode === 'raciocinioZ' ? models.raciocinioZ : models.default));
+                          (currentMode === 'raciocinioZ' ? models.raciocinioZ : models.default);
             modelOptions.innerHTML = '';
+            
+            // Auto-select first model
+            selectedModel = options[0];
+            
             options.forEach(model => {
                 const button = document.createElement('button');
                 button.classList.add('model-option');
@@ -210,13 +198,9 @@
                     selectedModel = model;
                     updateActiveModel();
                     updatePointsDisplay();
-                    saveSettings();
                 });
                 modelOptions.appendChild(button);
             });
-            if (!options.some(model => model.name === selectedModel.name)) {
-                selectedModel = options[0];
-            }
             updateActiveModel();
             updatePointsDisplay();
         }
@@ -228,71 +212,43 @@
         }
 
         function updatePointsDisplay() {
-            const points = getModelPoints(selectedModel.name);
-            pointsDisplay.textContent = `${points} ${isEnglish ? 'points per message' : 'pontos por mensagem'}`;
-        }
-
-        function getModelPoints(modelName) {
-            const modelList = currentMode === 'lite' ? models.lite :
-                              (currentMode === 'pesquisar' ? models.pesquisar :
-                              (currentMode === 'raciocinioZ' ? models.raciocinioZ : models.default));
-            const model = modelList.find(m => m.name === modelName);
-            return model ? model.points : 0;
+            const points = selectedModel.points;
+            const isGemini = selectedModel.name.includes('Gemini');
+            pointsDisplay.textContent = `${points} ${isEnglish ? 
+                `points${isGemini ? ' per standard message' : ' per message'}` : 
+                `pontos${isGemini ? ' por mensagem padrão' : ' por mensagem'}`}`;
         }
 
         function toggleMode(mode) {
-            if (mode === 'pesquisar' || mode === 'raciocinioZ') {
-                [pesquisarBtn, raciocinioXBtn, raciocinioZBtn, liteBtn].forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                if (mode === 'pesquisar') {
-                    pesquisarBtn.classList.add('active');
-                } else {
-                    raciocinioZBtn.classList.add('active');
-                }
-                currentMode = mode;
-            } else {
-                if (mode === 'raciocinioX') {
-                    raciocinioXBtn.classList.toggle('active');
-                } else if (mode === 'lite') {
-                    liteBtn.classList.toggle('active');
-                }
-                pesquisarBtn.classList.remove('active');
-                raciocinioZBtn.classList.remove('active');
+            if (mode === 'raciocinioZ') {
+                raciocinioZBtn.classList.toggle('active');
+                currentMode = raciocinioZBtn.classList.contains('active') ? 'raciocinioZ' : 'default';
+            } else if (mode === 'raciocinioX') {
+                raciocinioXBtn.classList.toggle('active');
+                currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
+            } else if (mode === 'lite') {
+                liteBtn.classList.toggle('active');
                 currentMode = liteBtn.classList.contains('active') ? 'lite' : 'default';
             }
             updateModels();
-            saveSettings();
         }
 
-        pesquisarBtn.addEventListener('click', () => toggleMode('pesquisar'));
         raciocinioXBtn.addEventListener('click', () => toggleMode('raciocinioX'));
         raciocinioZBtn.addEventListener('click', () => toggleMode('raciocinioZ'));
         liteBtn.addEventListener('click', () => toggleMode('lite'));
 
         function parseUrlParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('en') !== null) {
-                isEnglish = true;
-                updateLanguage();
-            }
-            if (urlParams.get('lite') !== null) {
-                toggleMode('lite');
-            }
-            if (urlParams.get('raciocinio') !== null) {
-                toggleMode('raciocinioX');
-            }
-            if (urlParams.get('raciocinioz') !== null) {
-                toggleMode('raciocinioZ');
-            }
-            if (urlParams.get('search') !== null) {
-                toggleMode('pesquisar');
-            }
+            if (urlParams.get('en') !== null) isEnglish = true;
+            if (urlParams.get('lite') !== null) toggleMode('lite');
+            if (urlParams.get('raciocinio') !== null) toggleMode('raciocinioX');
+            if (urlParams.get('raciocinioz') !== null) toggleMode('raciocinioZ');
+            
             const modelParam = urlParams.get('model');
             if (modelParam) {
                 const modelMap = {
                     'sonnet': 'Claude 3.5 Sonnet',
-                    'gemini': 'Gemini 1.5 Flash',
+                    'gemini': currentMode === 'lite' ? 'Gemini 2.0 Flash Lite' : 'Gemini 2.0 Flash',
                     'gpt4omini': 'GPT-4o Mini',
                     'gpt4o': 'GPT-4o',
                     'deep': 'DeepSeek R1',
@@ -301,17 +257,15 @@
                 const modelName = modelMap[modelParam.toLowerCase()];
                 if (modelName) {
                     const modelOption = Array.from(modelOptions.children).find(button => button.textContent === modelName);
-                    if (modelOption) {
-                        modelOption.click();
-                    }
+                    if (modelOption) modelOption.click();
                 }
             }
+            updateLanguage();
         }
 
         function updateLanguage() {
             if (isEnglish) {
                 document.querySelector('h1').textContent = 'Personalize Magic';
-                pesquisarBtn.innerHTML = pesquisarBtn.innerHTML.replace('Pesquisar', 'Search');
                 raciocinioXBtn.innerHTML = raciocinioXBtn.innerHTML.replace('Raciocínio X', 'Reasoning X');
                 raciocinioZBtn.innerHTML = raciocinioZBtn.innerHTML.replace('Raciocínio Z', 'Reasoning Z');
                 accessBtn.textContent = 'Access';
@@ -319,7 +273,6 @@
                 modelSelectorText.textContent = 'Model';
             } else {
                 document.querySelector('h1').textContent = 'Personalize o Magic';
-                pesquisarBtn.innerHTML = pesquisarBtn.innerHTML.replace('Search', 'Pesquisar');
                 raciocinioXBtn.innerHTML = raciocinioXBtn.innerHTML.replace('Reasoning X', 'Raciocínio X');
                 raciocinioZBtn.innerHTML = raciocinioZBtn.innerHTML.replace('Reasoning Z', 'Raciocínio Z');
                 accessBtn.textContent = 'Acessar';
@@ -332,46 +285,12 @@
         languageSwitch.addEventListener('click', () => {
             isEnglish = !isEnglish;
             updateLanguage();
-            saveSettings();
         });
 
-        function saveSettings() {
-            const settings = {
-                pesquisar: pesquisarBtn.classList.contains('active'),
-                raciocinioX: raciocinioXBtn.classList.contains('active'),
-                raciocinioZ: raciocinioZBtn.classList.contains('active'),
-                lite: liteBtn.classList.contains('active'),
-                model: selectedModel.name,
-                isEnglish: isEnglish
-            };
-            localStorage.setItem('magicSettings', JSON.stringify(settings));
-        }
-
-        function loadSettings() {
-            const savedSettings = localStorage.getItem('magicSettings');
-            if (savedSettings) {
-                const settings = JSON.parse(savedSettings);
-                if (settings.pesquisar) toggleMode('pesquisar');
-                else if (settings.raciocinioZ) toggleMode('raciocinioZ');
-                else {
-                    if (settings.raciocinioX) toggleMode('raciocinioX');
-                    if (settings.lite) toggleMode('lite');
-                }
-                isEnglish = settings.isEnglish;
-                updateLanguage();
-                const modelOption = Array.from(modelOptions.children).find(button => button.textContent === settings.model);
-                if (modelOption) {
-                    modelOption.click();
-                }
-            }
-        }
-
         updateModels();
-        loadSettings();
         parseUrlParams();
 
         accessBtn.addEventListener('click', () => {
-            const pesquisar = pesquisarBtn.classList.contains('active');
             const raciocinioX = raciocinioXBtn.classList.contains('active');
             const raciocinioZ = raciocinioZBtn.classList.contains('active');
             const lite = liteBtn.classList.contains('active');
@@ -379,53 +298,37 @@
 
             let url = 'https://poe.com/';
 
-            if (pesquisar) {
-                switch (model) {
-                    case 'Gemini 1.5 Flash':
-                        url += 'MagicWebAI';
-                        break;
-                    case 'GPT-4o Mini':
-                        url += 'webAIGPT';
-                        break;
-                }
-            } else if (lite && raciocinioX) {
-                switch (model) {
-                    case 'GPT-4o Mini':
-                        url += 'MagicXLiteGPT4oMini';
-                        break;
-                    case 'GPT-4o':
-                        url += 'MagicXLiteGPT4o';
-                        break;
-                    case 'Gemini 1.5 Flash':
-                        url += 'MagicXLiteGemini';
-                        break;
-                    case 'Claude 3.5 Sonnet':
-                        url += 'MagicXLiteSonnet';
-                        break;
-                }
-            } else if (lite) {
-                switch (model) {
-                    case 'GPT-4o Mini':
-                        url += 'MagicLiteGPT4oMini';
-                        break;
-                    case 'GPT-4o':
-                        url += 'MagicLiteGPT4o';
-                        break;
-                    case 'Gemini 1.5 Flash':
-                        url += 'MagicLiteGemini';
-                        break;
-                    case 'Claude 3.5 Sonnet':
-                        url += 'MagicLiteSonnet';
-                        break;
-                }
-            } else if (raciocinioX) {
-                switch (model) {
-                    case 'GPT-4o Mini':
-                        url += 'MagicXGPT4oMini';
-                        break;
-                    case 'GPT-4o':
-                        url += 'MagicXGPT4o';
-                        break;
+            if (lite) {
+                if (raciocinioX) {
+                    switch (model) {
+                        case 'GPT-4o Mini':
+                            url += 'MagicXLiteGPT4oMini';
+                            break;
+                        case 'GPT-4o':
+                            url += 'MagicXLiteGPT4o';
+                            break;
+                        case 'Gemini 2.0 Flash Lite':
+                            url += 'MagicXLiteGemini';
+                            break;
+                        case 'Claude 3.5 Sonnet':
+                            url += 'MagicXLiteSonnet';
+                            break;
+                    }
+                } else {
+                    switch (model) {
+                        case 'GPT-4o Mini':
+                            url += 'MagicLiteGPT4oMini';
+                            break;
+                        case 'GPT-4o':
+                            url += 'MagicLiteGPT4o';
+                            break;
+                        case 'Gemini 2.0 Flash Lite':
+                            url += 'MagicLiteGemini';
+                            break;
+                        case 'Claude 3.5 Sonnet':
+                            url += 'MagicLiteSonnet';
+                            break;
+                    }
                 }
             } else if (raciocinioZ) {
                 switch (model) {
@@ -437,17 +340,9 @@
                         break;
                 }
             } else {
-                switch (model) {
-                    case 'GPT-4o Mini':
-                        url += 'PyxelMagic';
-                        break;
-                    case 'GPT-4o':
-                        url += 'MagicGPT4o';
-                        break;
-                }
+                url += 'PyxelMagic';
             }
 
-            saveSettings();
             window.location.href = url;
         });
     </script>
